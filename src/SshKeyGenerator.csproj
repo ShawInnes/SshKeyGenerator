@@ -4,5 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-
+  <PropertyGroup>
+    <PackageVersion>1.1.0</PackageVersion>
+    <PackageId>SshKeyGenerator</PackageId>
+    <RepositoryUrl>https://github.com/ShawInnes/SshKeyGenerator</RepositoryUrl>
+  </PropertyGroup>
 </Project>
