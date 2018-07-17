@@ -8,5 +8,6 @@
     <PackageVersion>$(Version)</PackageVersion>
     <PackageId>SshKeyGenerator</PackageId>
     <RepositoryUrl>https://github.com/ShawInnes/SshKeyGenerator</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/ShawInnes/SshKeyGenerator</PackageProjectUrl>
   </PropertyGroup>
 </Project>
