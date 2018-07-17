@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageVersion>1.1.0</PackageVersion>
+    <PackageVersion>$(Version)</PackageVersion>
     <PackageId>SshKeyGenerator</PackageId>
     <RepositoryUrl>https://github.com/ShawInnes/SshKeyGenerator</RepositoryUrl>
   </PropertyGroup>
