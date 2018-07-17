@@ -4,7 +4,7 @@ pull_requests:
   do_not_increment_build_number: true
 build_script:
 - cmd: >-
-    dotnet pack src\SshKeyGenerator.csproj -c Release -o .\nuget-packed
+    dotnet pack src\SshKeyGenerator.csproj -c Release -o \projects\sshkeygenerator\nuget-packed
 artifacts:
 - path: nuget-packed\*.nupkg
   name: NuGet
