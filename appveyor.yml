@@ -1,5 +1,13 @@
 version: 1.1.{build}
 image: Visual Studio 2017
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
 pull_requests:
   do_not_increment_build_number: true
 build_script:
@@ -8,7 +16,8 @@ build_script:
 artifacts:
 - path: nuget-packed\*.nupkg
   name: NuGet
-on_finish:
-- cmd: >- 
-    dir .\nuget-packed
-    
+deploy:
+- provider: NuGet
+  api_key:
+    secure: 7Vadq8lW8bCfWxS95UEWlpA3BsAd9l5NjL1/Gu4rf+SNO+Nb5O0XBRl9/pxZQ79m
+  
