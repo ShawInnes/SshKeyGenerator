@@ -1,13 +1,14 @@
 version: 1.1.{build}
+image: Visual Studio 2017
 pull_requests:
   do_not_increment_build_number: true
 build_script:
-- sh: >-
-    dotnet pack src/SshKeyGenerator.csproj -c Release -o nuget-packed
+- cmd: >-
+    dotnet pack src\SshKeyGenerator.csproj -c Release -o nuget-packed
 artifacts:
 - path: nuget-packed\*.nupkg
   name: NuGet
 on_finish:
-- sh: >- 
-    ls -al nuget-packed
+- cmd: >- 
+    dir .\nuget-packed
     
