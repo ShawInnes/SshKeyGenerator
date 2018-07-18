@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -9,5 +9,8 @@
     <PackageId>SshKeyGenerator</PackageId>
     <RepositoryUrl>https://github.com/ShawInnes/SshKeyGenerator</RepositoryUrl>
     <PackageProjectUrl>https://github.com/ShawInnes/SshKeyGenerator</PackageProjectUrl>
+    <PackageTags>SSH Key Generator OpenSSH KeyGen dotnetcore</PackageTags>
+    <Authors>ShawInnes</Authors>
+    <Description>A native .NET and .NET Core library for creating SSH RSA keys suitable for use with SSH clients and Git+SSH authentication</Description>
   </PropertyGroup>
 </Project>
