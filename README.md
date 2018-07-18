@@ -8,3 +8,4 @@ After searching around for a solution to creating SSH keys using C# and dotnet c
 
 - Exporting Private Key: https://stackoverflow.com/a/23739932
 - Exporting Public Key: https://stackoverflow.com/a/25591659
+- Exporting Public Key in RFC4716 Format: https://stackoverflow.com/a/47917364
