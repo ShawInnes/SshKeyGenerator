@@ -54,7 +54,9 @@ namespace SshKeyGenerator
       }
     }
 
-    public string ToRfcPublicKey()
+    public string ToRfcPublicKey() => ToRfcPublicKey("generated-key");
+
+    public string ToRfcPublicKey(string comment)
     {
       byte[] sshrsaBytes = Encoding.Default.GetBytes("ssh-rsa");
       byte[] n = csp.ExportParameters(false).Modulus;
@@ -73,7 +75,7 @@ namespace SshKeyGenerator
         buffer64 = Convert.ToBase64String(ms.ToArray());
       }
 
-      return $"ssh-rsa {buffer64} generated-key";
+      return $"ssh-rsa {buffer64} {comment}";
     }
 
     public string ToPublicKey()
