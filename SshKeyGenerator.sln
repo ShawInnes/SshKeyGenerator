@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SshKeyGenerator", "src\SshKeyGenerator.csproj", "{D01AA9BC-6763-4E27-A115-4C6D61B94787}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample", "sample\sample.csproj", "{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,17 @@ Global
 		{D01AA9BC-6763-4E27-A115-4C6D61B94787}.Release|x64.Build.0 = Release|x64
 		{D01AA9BC-6763-4E27-A115-4C6D61B94787}.Release|x86.ActiveCfg = Release|x86
 		{D01AA9BC-6763-4E27-A115-4C6D61B94787}.Release|x86.Build.0 = Release|x86
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Debug|x64.ActiveCfg = Debug|x64
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Debug|x64.Build.0 = Debug|x64
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Debug|x86.ActiveCfg = Debug|x86
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Debug|x86.Build.0 = Debug|x86
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Release|x64.ActiveCfg = Release|x64
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Release|x64.Build.0 = Release|x64
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Release|x86.ActiveCfg = Release|x86
+		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 EndGlobal
