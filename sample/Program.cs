@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace SshKeyGenerator
+namespace SshKeyGeneratorSample
 {
   class Program
   {
     static void Main(string[] args)
     {
-      var keygen = new SshKeyGenerator(2048);
+      var keygen = new SshKeyGenerator.SshKeyGenerator(2048);
 
       var privateKey = keygen.ToPrivateKey();
       Console.WriteLine(privateKey);
