@@ -26,7 +26,7 @@ dotnet add package SshKeyGenerator
 ## Usage Example
 
 ```
-var keygen = new SshKeyGenerator(2048);
+var keygen = new SshKeyGenerator.SshKeyGenerator(2048);
 
 var privateKey = keygen.ToPrivateKey();
 Console.WriteLine(privateKey);
