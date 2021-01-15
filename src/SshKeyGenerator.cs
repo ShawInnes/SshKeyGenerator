@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SshKeyGenerator
 {
-  public class SshKeyGenerator
+  public class SshKeyGenerator : IDisposable
   {
     private RSACryptoServiceProvider csp;
 
@@ -202,6 +202,25 @@ namespace SshKeyGenerator
         Array.Reverse(bts);
       }
       return bts;
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        this.csp?.Dispose();
+      }
+    }
+
+    ~SshKeyGenerator()
+    {
+      Dispose(false);
     }
   }
 }
