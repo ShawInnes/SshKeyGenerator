@@ -1,16 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <TargetFrameworks>net6.0;net5.0;netstandard2.1;netstandard2.0;net452</TargetFrameworks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageVersion>$(Version)</PackageVersion>
-    <PackageId>SshKeyGenerator</PackageId>
+    <PackageId>SshKeyGenerator</PackageId>    
+    <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/ShawInnes/SshKeyGenerator</RepositoryUrl>
     <PackageProjectUrl>https://github.com/ShawInnes/SshKeyGenerator</PackageProjectUrl>
     <PackageTags>SSH Key Generator OpenSSH KeyGen dotnetcore</PackageTags>
     <Authors>ShawInnes</Authors>
     <Description>A native .NET and .NET Core library for creating SSH RSA keys suitable for use with SSH clients and Git+SSH authentication</Description>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE.md" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
 </Project>
