@@ -8,6 +8,9 @@ After searching around for a solution to creating SSH keys using C# and dotnet c
 
 - .NET 4.5 (Desktop / Server)
 - .NET Standard 2.0
+- .NET Standard 2.1
+- .NET 5.0
+- .NET 6.0
 
 ## Installation
 
