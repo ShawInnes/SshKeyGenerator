@@ -83,14 +83,14 @@ Export methods usage:
 
 ```csharp
 // Create a new instance 
-var pp = new SshKeyGen.SshKeyGenerator(4096);
+var keygen = new SshKeyGenerator.SshKeyGenerator(4096);
 
 // Get Base64 encoded keys with private key
-sshKeyData = pp.ToB64Blob(true);
+var base64Keys = keygen.ToB64Blob(true);
 
 // Use in a SSH server. e.g. FxSsh
 var server = new SshServer();
-server.AddHostKey("ssh-rsa", sshKeyData);
+server.AddHostKey("ssh-rsa", base64Keys);
 ```
 
 ## References
@@ -105,5 +105,4 @@ Thanks to the following contributors for their assistance with this library.
 
 - [@ryangribble](https://github.com/ryangribble)
 - [@richardlawley](https://github.com/richardlawley)
-- 
 - [@sauditore](https://github.com/sauditore)
