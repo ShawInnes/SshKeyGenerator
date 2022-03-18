@@ -1,5 +1,8 @@
 version: 1.1.{build}
 image: Visual Studio 2022
+branches:
+  only:
+    - master
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
