@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SshKeyGenerator", "src\SshK
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample", "sample\sample.csproj", "{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SshKeyGenerator.Tests", "tests\SshKeyGenerator.Tests.csproj", "{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Release|x64.Build.0 = Release|x64
 		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Release|x86.ActiveCfg = Release|x86
 		{1D3CAFD6-22ED-4D96-AAB2-8207DE83B181}.Release|x86.Build.0 = Release|x86
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Debug|x64.Build.0 = Debug|Any CPU
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Debug|x86.Build.0 = Debug|Any CPU
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Release|x64.ActiveCfg = Release|Any CPU
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Release|x64.Build.0 = Release|Any CPU
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Release|x86.ActiveCfg = Release|Any CPU
+		{A3D10AD0-CD42-41D3-992F-64E401F5DCB2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

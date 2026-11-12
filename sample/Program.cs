@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using SshKeyGenerator;
 
 namespace SshKeyGeneratorSample
 {
@@ -6,30 +7,15 @@ namespace SshKeyGeneratorSample
     {
         static void Main(string[] args)
         {
-            // Create a new instance 
-            var keygen = new SshKeyGenerator.SshKeyGenerator(2048);
-
-            // Get native private key
-            var privateKey = keygen.ToPrivateKey();
-            Console.WriteLine(privateKey);
-
-            // Get native public key
-            var publicSshKey = keygen.ToRfcPublicKey();
-            Console.WriteLine(publicSshKey);
-
-            // Get public key with comment
-            var publicSshKeyWithComment = keygen.ToRfcPublicKey("user@domain.com");
-            Console.WriteLine(publicSshKeyWithComment);
-
-            // Get Base64 encoded keys with private key
-            var base64Keys = keygen.ToB64Blob(true);
-            Console.WriteLine(base64Keys);
-
-            // Use in a SSH server. e.g. FxSsh
-            /*
-            var server = new SshServer();
-            server.AddHostKey("ssh-rsa", base64Keys);
-            */
+            // Supply a passphrase through your application's secret input mechanism.
+            // This sample reads an environment variable and prints private keys for demonstration.
+            var passphrase = Environment.GetEnvironmentVariable("SSH_KEY_PASSPHRASE");
+            using (var keygen = new SshKeyGenerator.SshKeyGenerator(2048))
+            {
+                Console.WriteLine(keygen.ToPrivateKey(PrivateKeyFormat.OpenSsh, passphrase, "user@domain.com"));
+                Console.WriteLine(keygen.ToPrivateKey(PrivateKeyFormat.Pem, passphrase));
+                Console.WriteLine(keygen.ToRfcPublicKey("user@domain.com"));
+            }
         }
     }
 }

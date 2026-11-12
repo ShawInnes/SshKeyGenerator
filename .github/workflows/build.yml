@@ -1,0 +1,26 @@
+name: Build and test
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - run: dotnet build SshKeyGenerator.sln -c Release
+      - run: dotnet test tests/SshKeyGenerator.Tests.csproj -c Release --no-build
+        env:
+          SSH_KEYGEN_INTEROP_TESTS: ${{ runner.os != 'Windows' && '1' || '0' }}
+      - if: runner.os == 'Linux'
+        run: |
+          dotnet test tests/SshKeyGenerator.Tests.csproj -c Release -f net8.0 -p:KeyGeneratorTargetFramework=netstandard2.0
+          dotnet test tests/SshKeyGenerator.Tests.csproj -c Release -f net8.0 -p:KeyGeneratorTargetFramework=netstandard2.1
+        env:
+          SSH_KEYGEN_INTEROP_TESTS: '1'
+      - run: dotnet pack src/SshKeyGenerator.csproj -c Release --no-build

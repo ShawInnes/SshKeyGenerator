@@ -1,27 +1,64 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace SshKeyGenerator
 {
     public class SshKeyGenerator : IDisposable
     {
-        private RSACryptoServiceProvider csp;
+        private readonly RSA rsa;
+        private bool disposed;
 
         public SshKeyGenerator(int keySize)
         {
-            this.csp = new RSACryptoServiceProvider(keySize);
+            rsa = RSA.Create();
+            try
+            {
+                rsa.KeySize = keySize;
+            }
+            catch
+            {
+                rsa.Dispose();
+                throw;
+            }
         }
 
         /// <summary>
-        /// Returns the private key in x509 format
+        /// Returns the private key in unencrypted PKCS#1 PEM format
         /// </summary>
-        /// <returns>string containing x509 encoded private key</returns>
+        /// <returns>string containing a PEM encoded RSA private key</returns>
         public string ToPrivateKey()
         {
-            if (csp.PublicOnly) throw new ArgumentException("CSP does not contain a private key", nameof(csp));
-            var parameters = csp.ExportParameters(true);
+            return ToPrivateKey(PrivateKeyFormat.Pem);
+        }
+
+        /// <summary>Exports a PKCS#1 PEM key, optionally protected with a passphrase.</summary>
+        public string ToPrivateKey(string passphrase) => ToPrivateKey(PrivateKeyFormat.Pem, passphrase);
+
+        /// <summary>Exports an RSA private key in the selected format.</summary>
+        /// <param name="format">PEM or OpenSSH private key format.</param>
+        /// <param name="passphrase">Null or empty exports an unencrypted key; otherwise encrypts it.</param>
+        /// <param name="comment">Comment embedded in OpenSSH keys.</param>
+        public string ToPrivateKey(PrivateKeyFormat format, string passphrase = null, string comment = "generated-key")
+        {
+            ThrowIfDisposed();
+            if (format != PrivateKeyFormat.Pem && format != PrivateKeyFormat.OpenSsh)
+                throw new ArgumentOutOfRangeException(nameof(format));
+            if (format == PrivateKeyFormat.OpenSsh)
+                return PrivateKeyWriter.OpenSsh(rsa.ExportParameters(true), passphrase, comment);
+
+            var der = ExportPrivateKeyDer();
+            try { return PrivateKeyWriter.Pem(der, passphrase); }
+            finally { Array.Clear(der, 0, der.Length); }
+        }
+
+        /// <summary>Exports an OpenSSH private key with optional passphrase protection.</summary>
+        public string ToOpenSshPrivateKey(string passphrase = null, string comment = "generated-key")
+            => ToPrivateKey(PrivateKeyFormat.OpenSsh, passphrase, comment);
+
+        private byte[] ExportPrivateKeyDer()
+        {
+            var parameters = rsa.ExportParameters(true);
             using (var stream = new MemoryStream())
             {
                 var writer = new BinaryWriter(stream);
@@ -43,19 +80,7 @@ namespace SshKeyGenerator
                     writer.Write(innerStream.GetBuffer(), 0, length);
                 }
 
-                var base64 = Convert.ToBase64String(stream.GetBuffer(), 0, (int) stream.Length).ToCharArray();
-                using (StringWriter outputStream = new StringWriter())
-                {
-                    outputStream.WriteLine("-----BEGIN RSA PRIVATE KEY-----");
-                    // Output as Base64 with lines chopped at 64 characters
-                    for (var i = 0; i < base64.Length; i += 64)
-                    {
-                        outputStream.WriteLine(base64, i, Math.Min(64, base64.Length - i));
-                    }
-
-                    outputStream.WriteLine("-----END RSA PRIVATE KEY-----");
-                    return outputStream.ToString();
-                }
+                return stream.ToArray();
             }
         }
 
@@ -68,7 +93,14 @@ namespace SshKeyGenerator
         /// <returns>CSP Blobs</returns>
         public byte[] ToBlobs(bool includePrivateKey)
         {
-            return csp.ExportCspBlob(includePrivateKey);
+            ThrowIfDisposed();
+            // CSP blobs are a legacy Windows format. Keep this API for existing callers.
+            using (var provider = new RSACryptoServiceProvider())
+            {
+                provider.PersistKeyInCsp = false;
+                provider.ImportParameters(rsa.ExportParameters(includePrivateKey));
+                return provider.ExportCspBlob(includePrivateKey);
+            }
         }
 
         /// <summary>
@@ -87,42 +119,30 @@ namespace SshKeyGenerator
         /// <returns>XML string</returns>
         public string ToXml()
         {
-            return csp.ToXmlString(true);
+            ThrowIfDisposed();
+            return rsa.ToXmlString(true);
         }
 
         /// <summary>
-        /// Returns the SSH public key in RFC4716 format
+        /// Returns the SSH public key in OpenSSH authorized_keys format
         /// </summary>
-        /// <returns>string containing RFC4716 public key</returns>
+        /// <returns>string containing a single-line OpenSSH public key</returns>
         public string ToRfcPublicKey(string comment)
         {
-            byte[] sshrsaBytes = Encoding.Default.GetBytes("ssh-rsa");
-            byte[] n = csp.ExportParameters(false).Modulus;
-            byte[] e = csp.ExportParameters(false).Exponent;
-            string buffer64;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Write(ToBytes(sshrsaBytes.Length), 0, 4);
-                ms.Write(sshrsaBytes, 0, sshrsaBytes.Length);
-                ms.Write(ToBytes(e.Length), 0, 4);
-                ms.Write(e, 0, e.Length);
-                ms.Write(ToBytes(n.Length + 1), 0, 4); //Remove the +1 if not Emulating Putty Gen
-                ms.Write(new byte[] {0}, 0, 1); //Add a 0 to Emulate PuttyGen
-                ms.Write(n, 0, n.Length);
-                ms.Flush();
-                buffer64 = Convert.ToBase64String(ms.ToArray());
-            }
-
-            return $"ssh-rsa {buffer64} {comment}";
+            ThrowIfDisposed();
+            PrivateKeyWriter.ValidateComment(comment);
+            return "ssh-rsa " + Convert.ToBase64String(PrivateKeyWriter.PublicBlob(rsa.ExportParameters(false)))
+                + (string.IsNullOrEmpty(comment) ? "" : " " + comment);
         }
 
         /// <summary>
-        /// Returns the SSH public key in x509 format
+        /// Returns the public key in SubjectPublicKeyInfo PEM format
         /// </summary>
         /// <returns>string containing x509 encoded public key</returns>
         public string ToPublicKey()
         {
-            var parameters = csp.ExportParameters(false);
+            ThrowIfDisposed();
+            var parameters = rsa.ExportParameters(false);
             using (var stream = new MemoryStream())
             {
                 var writer = new BinaryWriter(stream);
@@ -242,15 +262,9 @@ namespace SshKeyGenerator
             }
         }
 
-        private byte[] ToBytes(int i)
+        private void ThrowIfDisposed()
         {
-            byte[] bts = BitConverter.GetBytes(i);
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bts);
-            }
-
-            return bts;
+            if (disposed) throw new ObjectDisposedException(nameof(SshKeyGenerator));
         }
 
         public void Dispose()
@@ -261,15 +275,11 @@ namespace SshKeyGenerator
 
         protected void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && !disposed)
             {
-                this.csp?.Dispose();
+                rsa.Dispose();
+                disposed = true;
             }
-        }
-
-        ~SshKeyGenerator()
-        {
-            Dispose(false);
         }
     }
 }

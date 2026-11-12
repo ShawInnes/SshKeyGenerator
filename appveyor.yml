@@ -1,5 +1,11 @@
 version: 1.1.{build}
 image: Visual Studio 2022
+init:
+- ps: |
+    Invoke-WebRequest https://dot.net/v1/dotnet-install.ps1 -OutFile dotnet-install.ps1
+    ./dotnet-install.ps1 -Channel 8.0
+    ./dotnet-install.ps1 -Channel 10.0
+    $env:PATH = "$env:LOCALAPPDATA\Microsoft\dotnet;$env:PATH"
 branches:
   only:
     - master
@@ -14,6 +20,7 @@ dotnet_csproj:
 pull_requests:
   do_not_increment_build_number: true
 build_script:
+- cmd: dotnet test tests\SshKeyGenerator.Tests.csproj -c Release
 - cmd: >-
     dotnet pack src\SshKeyGenerator.csproj -c Release -p:Version=%APPVEYOR_BUILD_VERSION% -o \projects\sshkeygenerator\nuget-packed
 artifacts:
