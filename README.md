@@ -1,6 +1,6 @@
 # DotNet Core SSH KeyGen
 
-[![Build status](https://ci.appveyor.com/api/projects/status/b0jfpp2jvslo3mj8?svg=true)](https://ci.appveyor.com/project/ShawInnes/sshkeygenerator) [![NuGet version (SshKeyGenerator)](https://img.shields.io/nuget/v/SshKeyGenerator.svg?style=flat-square)](https://www.nuget.org/packages/SshKeyGenerator/)
+[![Build and test](https://github.com/ShawInnes/SshKeyGenerator/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/ShawInnes/SshKeyGenerator/actions/workflows/build.yml) [![NuGet version (SshKeyGenerator)](https://img.shields.io/nuget/v/SshKeyGenerator.svg?style=flat-square)](https://www.nuget.org/packages/SshKeyGenerator/)
 
 Generate RSA SSH keys in managed C# on Windows, Linux, and macOS. Export private keys as OpenSSH or PKCS#1 RSA/PEM, with optional passphrase protection. The library has no runtime package dependencies and does not invoke external tools.
 
@@ -189,6 +189,37 @@ public keys, and verify RSA signatures. Native-tool checks are opt-in locally an
 run in Linux/macOS CI. Framework 4.5.2 and .NET 5/6 assets are compile-checked;
 they require their respective runtimes for execution. See
 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for the vendored bcrypt license.
+
+## Releasing to NuGet
+
+GitHub Actions builds and tests pull requests and pushes on Windows, Linux, and
+macOS. The Linux job saves the NuGet package as the `nuget-build` workflow artifact.
+Publishing a GitHub release triggers `.github/workflows/release.yml`, which reruns
+the full build/test matrix before packing and publishing to NuGet.org. Ordinary
+pushes and pull requests do not publish packages.
+
+One-time setup for a package owner:
+
+1. Configure [NuGet trusted publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing)
+   for repository owner `ShawInnes`, repository `SshKeyGenerator`, and workflow
+   filename `release.yml` (without the `.github/workflows/` prefix). Leave the
+   environment field empty; the workflow does not use a GitHub environment.
+   Scope publishing to the `SshKeyGenerator` package.
+2. Set the GitHub repository Actions variable `NUGET_USER` to the NuGet.org
+   username that owns the policy (not an email address). The workflow exchanges
+   its GitHub OIDC token for a short-lived NuGet API key; no stored API key is needed.
+3. Disable the old AppVeyor project/webhook and remove any required AppVeyor status
+   check from branch protection if still configured. AppVeyor configuration and
+   publishing have been removed from this repository.
+
+For version `2.0.0`, merge the changes into `master`, then create and publish a
+GitHub release targeting that commit with tag **`v2.0.0`**. The tag must equal
+`v` followed by the package version in `src/SshKeyGenerator.csproj`; a mismatch
+fails before publishing. Update `<Version>` in that project for subsequent releases.
+
+The release workflow saves the package as the `nuget-release` artifact before
+publishing. A rerun skips an already-published package version; NuGet versions
+cannot be overwritten. This workflow does not create tags or GitHub releases.
 
 ## References
 

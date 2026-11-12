@@ -1,5 +1,10 @@
 name: Build and test
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_call:
+permissions:
+  contents: read
 jobs:
   test:
     strategy:
@@ -23,4 +28,10 @@ jobs:
           dotnet test tests/SshKeyGenerator.Tests.csproj -c Release -f net8.0 -p:KeyGeneratorTargetFramework=netstandard2.1
         env:
           SSH_KEYGEN_INTEROP_TESTS: '1'
-      - run: dotnet pack src/SshKeyGenerator.csproj -c Release --no-build
+      - run: dotnet pack src/SshKeyGenerator.csproj -c Release --no-build --output artifacts
+      - if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-build
+          path: artifacts/*.nupkg
+          if-no-files-found: error

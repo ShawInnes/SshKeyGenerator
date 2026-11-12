@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <PropertyGroup>
+    <Version>2.0.0</Version>
     <PackageVersion>$(Version)</PackageVersion>
     <PackageId>SshKeyGenerator</PackageId>    
     <RepositoryType>git</RepositoryType>
