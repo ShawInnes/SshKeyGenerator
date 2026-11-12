@@ -4,6 +4,23 @@
 
 After searching around for a solution to creating SSH keys using C# and dotnet core I came across the following stackoverflow posts which explain how to convert from `RSACryptoServiceProvider` to values suitable for use with ssh.
 
+## Project principles
+
+- **Keep the library dependency-free.** Production code must use the .NET Base
+  Class Library (BCL), including `System.Security.Cryptography`, rather than
+  third-party cryptography libraries such as Bouncy Castle or SSH.NET.
+- **Keep key generation self-contained.** Do not require external executables,
+  native crypto packages, or platform-specific interop for generation or export.
+- **Implement missing format support locally.** Where the BCL does not provide
+  an SSH encoding or derivation operation, use a focused managed implementation
+  built on the BCL. The internal bcrypt_pbkdf implementation is one such case;
+  preserve its attribution and license notices.
+- **Verify interoperability independently.** Third-party readers and command-line
+  tools may be used in tests only; they must never become dependencies of the
+  shipped library. Test/build packages must remain separate from runtime code.
+- **Preserve existing functionality.** Keep existing APIs and key formats
+  compatible, and document any observable behavior changes.
+
 ## Supported Platforms
 
 - .NET 4.5 (Desktop / Server)
