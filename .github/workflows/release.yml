@@ -1,0 +1,67 @@
+name: Publish NuGet release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nuget-release-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    uses: ./.github/workflows/build.yml
+
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Validate release version and publishing configuration
+        id: version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          NUGET_USER: ${{ vars.NUGET_USER }}
+        shell: bash
+        run: |
+          package_version="$(dotnet msbuild src/SshKeyGenerator.csproj -nologo -getProperty:PackageVersion)"
+          if [[ "$RELEASE_TAG" != "v$package_version" ]]; then
+            echo "::error::Release tag must be v$package_version to match the package version."
+            exit 1
+          fi
+          if [[ -z "$NUGET_USER" ]]; then
+            echo "::error::Set the NUGET_USER repository variable to the NuGet.org publishing account username."
+            exit 1
+          fi
+          echo "package-version=$package_version" >> "$GITHUB_OUTPUT"
+      - name: Pack release
+        run: dotnet pack src/SshKeyGenerator.csproj -c Release --output artifacts -p:ContinuousIntegrationBuild=true
+      - name: Upload release package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-release
+          path: artifacts/*.nupkg
+          if-no-files-found: error
+      - name: Authenticate with NuGet.org
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ vars.NUGET_USER }}
+      - name: Publish package
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+          PACKAGE_VERSION: ${{ steps.version.outputs.package-version }}
+        run: >-
+          dotnet nuget push "artifacts/SshKeyGenerator.$PACKAGE_VERSION.nupkg"
+          --api-key "$NUGET_API_KEY"
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
